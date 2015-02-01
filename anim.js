@@ -54,7 +54,7 @@
                     }
                     
                     if(lastStyle && !lastStyle.tween){
-                        lastStyle.num = t/duration*100 - .00001;
+                        lastStyle.num = t/duration*100 - .0001;
                         styles.push(lastStyle);
                     }
 
@@ -92,34 +92,43 @@
                 lastStyle = that.merge({}, styles[styles.length-1]);
                 t+=frame.duration;
             });
-
-            that.addKeyframe(styles, layerData.name);
+    
+            var elemData = {
+                width:imgData.w,
+                height:imgData.h,
+                imgX:imgData.x,
+                imgY:imgData.y,
+                index:100-index,
+                time:duration/24,
+                image:image
+            };
+            var animName = layerData.name;
+            that.addStyle(styles, elemData, animName);
             var elem = document.createElement("div");
-            elem.className = "flashAnim";
-            var style = elem.style;
-            
-            style["animation"] = style[cssVendor + "Animation"] = layerData.name + " " + (duration/24) + "s linear 0s infinite";
-            style[cssVendor + "TransformOrigin"] = "50% 50%";
-            style.background = "url(" + image + ") no-repeat";
-            style.width = imgData.w + "px";
-            style.height = imgData.h + "px";
-            style.backgroundPosition = (-imgData.x) + "px " + (-imgData.y) + "px";
-            style.zIndex = 100-index;
-
+            elem.className = animName + " flashAnim";            
             container.appendChild(elem);
         },
         /**
-         * @method addKeyFrame
+         * @method addStyle
          * @param {Array} styles
+         * @param {Object} elemData
          * @param {String} animName
         */
-        addKeyframe:function(styles, animName){
+        addStyle:function(styles, elemData, animName){
             var that = this;
             var cssVendor = that.getCSSVendor();
             var keyTpl = '\n\
                 @-{cssVendor}-keyframes {anim}{\n\
                 {content}\n\
-                }\n';
+                }\n\
+                .{anim}{\n\
+                    width:{width}px;\n\
+                    height:{height}px;\n\
+                    background:url({image}) no-repeat;\n\
+                    background-position:-{imgX}px -{imgY}px;\n\
+                    z-index:{index};\n\
+                    -{cssVendor}-animation:{anim} {time}s linear 0s infinite;}\n\
+                ';
 
             var percentTpl = '\
                 {num}% {\n\
@@ -133,11 +142,11 @@
                 s.cssVendor = cssVendor;
                 content += that.renderTpl(percentTpl, s);
             });
-            var style = that.renderTpl(keyTpl, {
+            var style = that.renderTpl(keyTpl, that.merge({
                 anim:animName,
                 content:content,
                 cssVendor:cssVendor
-            });
+            },elemData));
 
             var styleElem = document.getElementById("flashAnimStyle");
             if(styleElem){
