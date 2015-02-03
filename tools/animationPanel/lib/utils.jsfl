@@ -14,16 +14,14 @@ function clear() {
 	fl.outputPanel.clear();
 }
 
-var doc, timeline, layers, lib;
-fl.init = function () {
-	doc = fl.doc = fl.getDocumentDOM();
-	timeline = fl.timeline = doc.getTimeline();
-	layers = fl.layers = timeline.layers;
-	frames = fl.frames = layers[0].frames;
-	elems = fl.elems = frames[0].elements;
-	elem = fl.elem = elems[0];
-	lib = fl.lib = fl.doc.library;
-
+fl.init = function(){
+	window.doc = fl.doc = fl.getDocumentDOM();
+	window.timeline = fl.timeline = doc.getTimeline();
+	var layers = fl.layers = timeline.layers;
+	var frames = fl.frames = layers[0].frames;
+	var elems = fl.elems = frames[0].elements;
+	fl.elem = elems[0];
+	window.lib = fl.doc.library;
 }
 fl.init();
 
@@ -37,8 +35,8 @@ fl.parse = function (str) {
 
 fl.setElement = function (elem) {
 	elem = elem instanceof Layer ? elem.frames[0].elements[0] : elem;
-	doc.selectNone();
-	doc.selection = [elem];
+	fl.doc.selectNone();
+	fl.doc.selection = [elem];
 };
 
 fl.getElementProperty = function (elem, prop) {
@@ -70,8 +68,16 @@ fl.editItem = function (name) {
 	var success = lib.editItem(name);
 	fl.init();
 	fl.initTimeline();
-	log("edit " + name + " " + success);
+    if(!success){
+        log("edit " + name + " error!");
+    }
 	return success;
+};
+
+fl.exit = function(){
+    doc.exitEditMode();
+    fl.init();
+    fl.initTimeline();
 };
 
 fl.getItem = function (name) {
@@ -88,6 +94,7 @@ fl.getLibraryName = function (elem) {
 	}
 
 };
+
 
 //fl.getBounds = function(obj){
 //var x = obj.x, y = obj.y, w = obj.width, h = obj.height, angle = obj.rotation;
@@ -135,7 +142,7 @@ fl.rotate = function (x, y, ang) {
 
 fl.getFrameBounds = function (n) {
 	timeline.setSelectedFrames(n, n);
-	doc.selectAll();
+	fl.doc.selectAll();
 	return document.getSelectionRect();
 }
 
@@ -152,14 +159,14 @@ fl.getAllBounds = function (num) {
 };
 
 fl.renameAllLayers = function () {
-	layers.forEach(function (layer, i) {
+	fl.layers.forEach(function (layer, i) {
 		if (fl.getLibraryName(layer.frames[0].elements[0]) != layer.name) {
 			layer.name = fl.getLibraryName(layer.frames[0].elements[0]);
 		}
 	})
 }
 fl.initTimeline = function () {
-	layers.forEach(function (layer, i) {
+	fl.layers.forEach(function (layer, i) {
 		timeline.setSelectedLayers(i, false);
 		timeline.setLayerProperty('locked', false);
 		// timeline.convertToKeyframes();   

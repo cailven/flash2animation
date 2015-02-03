@@ -1,4 +1,5 @@
 ;(function(){
+    var animID = 0;
     /**
      * @module anim
     */
@@ -27,6 +28,11 @@
             var that = this;
             var cssVendor = that.getCSSVendor();
             var frames = layerData.frames;
+            if(!frames || frames.length == 0){
+                console.warn("no frames:", layerData.name);
+                return;
+            }
+
             var duration = frames.reduce(function(item, next){
                 return {
                     duration:item.duration + next.duration
@@ -37,13 +43,26 @@
             var t = 0;
             var r = 0;
             var lastStyle;
-            var imgData = allData.texture[layerData.name];
+            var imgData = allData.texture[layerData.image];
+            if(!imgData){
+                console.warn("no image data! ","layerName:"+ layerData.name, " imageName:"+layerData.image);
+                return;
+            }
+
             frames.forEach(function(frame, i){
+                var timingCss = "";
+                var useStep = false;
+                if(useStep){
+                    timingCss = "-" + cssVendor + "-animation-timing-function:step-end;\n";
+                }
+                else if(lastStyle && !lastStyle.tween){
+                    lastStyle.num = t/duration*100 - .0001;
+                    styles.push(lastStyle);
+                };
+
                 var elem = frame.elem;
-                if(elem){
-                    var m = elem.matrix;
-            
-                    var rotation =- Math.atan2(m.c, m.d) * 180 / Math.PI;
+                if(elem){            
+                    var rotation = elem.rotation;
                     rotation += r;
 
                     if(frame.rotateType == "clockwise"){
@@ -52,28 +71,26 @@
                     else if(frame.rotateType == "counter-clockwise"){
                         r -= 360 * frame.rotateTime;
                     }
-                    
-                    if(lastStyle && !lastStyle.tween){
-                        lastStyle.num = t/duration*100 - .0001;
-                        styles.push(lastStyle);
+                    else if(frame.rotateType == "auto"){
+                        if(lastStyle && Math.abs(lastStyle.rotation - rotation) > 180){
+                            rotation += rotation > lastStyle.rotation?-360:360;
+                        }
                     }
 
+                    var isTween = frame.tween == "motion";
                     styles.push({
-                        tween:frame.tween == "motion",
+                        x:elem.x - elem.originX,
+                        y:elem.y - elem.originY,
+                        scaleX:elem.scaleX,
+                        scaleY:elem.scaleY,
+                        rotation:rotation,
+                        originX:elem.originX,
+                        originY:elem.originY,
+                        tween:isTween,
                         num:t/duration*100,
                         alpha:elem.alpha * .01,
-                        x:elem.transformX - imgData.w * .5,
-                        y:elem.transformY - imgData.h * .5,
-                        scaleX:Math.sqrt(m.a * m.a + m.b * m.b),
-                        scaleY:Math.sqrt(m.c * m.c + m.d * m.d),
-                        rotation:rotation
+                        timing:isTween?"":timingCss
                     });
-
-                    if(i == frames.length-1){
-                        var s = that.merge({}, styles[styles.length-1]);
-                        s.num = 100;
-                        styles.push(s);
-                    }
                 }
                 else{
                     styles.push({
@@ -85,14 +102,20 @@
                         x:0,
                         y:0,
                         originX:0,
-                        originY:0
+                        originY:0,
+                        timing:timingCss
                     });
                 }
 
                 lastStyle = that.merge({}, styles[styles.length-1]);
                 t+=frame.duration;
             });
-    
+
+            var endStyle = that.merge({}, styles[styles.length-1]);
+            endStyle.num = 100;
+            endStyle.timing = "";
+            styles.push(endStyle);
+            
             var elemData = {
                 width:imgData.w,
                 height:imgData.h,
@@ -102,7 +125,7 @@
                 time:duration/24,
                 image:image
             };
-            var animName = layerData.name;
+            var animName = layerData.name + (animID++);
             that.addStyle(styles, elemData, animName);
             var elem = document.createElement("div");
             elem.className = animName + " flashAnim";            
@@ -127,17 +150,19 @@
                     background:url({image}) no-repeat;\n\
                     background-position:-{imgX}px -{imgY}px;\n\
                     z-index:{index};\n\
-                    -{cssVendor}-animation:{anim} {time}s linear 0s infinite;}\n\
+                    -{cssVendor}-animation:{anim} {time}s linear 0s infinite;\n\
+                }\n\
                 ';
 
             var percentTpl = '\
                 {num}% {\n\
                     opacity:{alpha};\n\
                     -{cssVendor}-transform:translate3d({x}px, {y}px, 0px) rotateZ({rotation}deg) scale3d({scaleX}, {scaleY}, 1);\n\
+                    -{cssVendor}-transform-origin:{originX}px {originY}px;\n\
+                    {timing}\
                 }\n';
 
             var content = "";
-            var last = "";
             styles.forEach(function(s){
                 s.cssVendor = cssVendor;
                 content += that.renderTpl(percentTpl, s);
@@ -149,15 +174,10 @@
             },elemData));
 
             var styleElem = document.getElementById("flashAnimStyle");
-            if(styleElem){
-                styleElem.innerHTML += style;
-            }
-            else{
-                styleElem = document.createElement("style");
-                styleElem.innerHTML = style;
-                styleElem.id = "flashAnimStyle";
-                document.getElementsByTagName("head")[0].appendChild(styleElem);
-            }
+            styleElem = document.createElement("style");
+            styleElem.innerHTML = style;
+            styleElem.id = "flashAnimStyle_" + animName;
+            document.getElementsByTagName("head")[0].appendChild(styleElem);
         },
         /**
          * @method 获取css前缀
