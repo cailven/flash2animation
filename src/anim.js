@@ -6,25 +6,40 @@
     var anim = {
         /**
          * @method build 
-         * @param {Object} data
-         * @param {HTMLElement} container
+         * @param {Object} cfg
+         * @param {Object} cfg.data 导出的动画数据
+         * @param {String} cfg.image 图片地址
+         * @param {HTMLElement} cfg.container 动画的容器，默认为document.body
+         * @param {Number} cfg.time 循环次数，0为无限循环，默认无限循环 
+         * @param {Number} cfg.fps 帧频，默认为导出数据中的帧频
         */
-        build:function(data, container, image){
+        build:function(cfg){
             var that = this;
-            container = container||document.body;
-            data.layers.forEach(function(layer, index){
-                if(layer.name != "action"){
-                   that.parseLayer(container, layer, image, index, data);
-                }
-            });
+            var data = cfg.data;
+            var image = cfg.image;
+            if(data && image){
+                var container = cfg.container||document.body;
+                var fps = cfg.fps||data.stage.fps;
+                var time = cfg.time||"infinite";
+
+                data.layers.forEach(function(layer, index){
+                    if(layer.name != "action"){
+                       that.parseLayer(container, layer, image, index, data.texture, fps, time);
+                    }
+                });
+            }
         },
         /**
          * @method parseLayer
          * @param {HTMLElement} container
-         * @param {Object} layerData
-         * @param {Number} index
+         * @param {Object} layerData 层数据
+         * @param {String} image 图片地址
+         * @param {Number} index 层级
+         * @param {Object} texture 图片数据
+         * @param {Number} fps 帧频 
+         * @param {Number} time 播放次数
         */
-        parseLayer:function(container, layerData, image, index, allData){
+        parseLayer:function(container, layerData, image, index, texture, fps, time){
             var that = this;
             var cssVendor = that.getCSSVendor();
             var frames = layerData.frames;
@@ -43,7 +58,7 @@
             var t = 0;
             var r = 0;
             var lastStyle;
-            var imgData = allData.texture[layerData.image];
+            var imgData = texture[layerData.image];
             if(!imgData){
                 console.warn("no image data! ","layerName:"+ layerData.name, " imageName:"+layerData.image);
                 return;
@@ -122,11 +137,11 @@
                 imgX:imgData.x,
                 imgY:imgData.y,
                 index:100-index,
-                time:duration/24,
+                duration:duration/fps,
                 image:image
             };
             var animName = layerData.name + (animID++);
-            that.addStyle(styles, elemData, animName);
+            that.addStyle(styles, elemData, animName, time);
             var elem = document.createElement("div");
             elem.className = animName + " flashAnim";            
             container.appendChild(elem);
@@ -137,7 +152,7 @@
          * @param {Object} elemData
          * @param {String} animName
         */
-        addStyle:function(styles, elemData, animName){
+        addStyle:function(styles, elemData, animName, time){
             var that = this;
             var cssVendor = that.getCSSVendor();
             var keyTpl = '\n\
@@ -150,7 +165,7 @@
                     background:url({image}) no-repeat;\n\
                     background-position:-{imgX}px -{imgY}px;\n\
                     z-index:{index};\n\
-                    -{cssVendor}-animation:{anim} {time}s linear 0s infinite;\n\
+                    -{cssVendor}-animation:{anim} {duration}s linear 0s {time};\n\
                 }\n\
                 ';
 
@@ -168,6 +183,7 @@
                 content += that.renderTpl(percentTpl, s);
             });
             var style = that.renderTpl(keyTpl, that.merge({
+                time:time,
                 anim:animName,
                 content:content,
                 cssVendor:cssVendor

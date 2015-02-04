@@ -10,7 +10,20 @@ flash插件导出css3 animation动画
    * 也可以直接双击运行tools/animationPanel/animation.jsfl
 2. 播放动画
    1. 引用src/anim.js
-   2. 运行anim.build(animData, container, animImage);
+   2. 执行anim.build(cfg), cfg定义见下面注释;
+   
+        ```
+        /**
+         * @method anim.build 
+         * @param {Object} cfg
+         * @param {Object} cfg.data 导出的动画数据
+         * @param {String} cfg.image 图片地址
+         * @param {HTMLElement} cfg.container 动画的容器，默认为document.body
+         * @param {Number} cfg.time 循环次数，0为无限循环，默认无限循环 
+         * @param {Number} cfg.fps 帧频，默认为导出数据中的帧频
+        */
+        ```
+   
    
 ## flash动画规范
 * 每个图层只允许有一个元件,元素必须先转换成元件

@@ -16,12 +16,14 @@ function clear() {
 
 fl.init = function(){
 	window.doc = fl.doc = fl.getDocumentDOM();
-	window.timeline = fl.timeline = doc.getTimeline();
-	var layers = fl.layers = timeline.layers;
-	var frames = fl.frames = layers[0].frames;
-	var elems = fl.elems = frames[0].elements;
-	fl.elem = elems[0];
-	window.lib = fl.doc.library;
+	if(doc){
+        window.timeline = fl.timeline = doc.getTimeline();
+        var layers = fl.layers = timeline.layers;
+        var frames = fl.frames = layers[0].frames;
+        var elems = fl.elems = frames[0].elements;
+        fl.elem = elems[0];
+        window.lib = fl.doc.library;
+    }
 }
 fl.init();
 
@@ -92,7 +94,6 @@ fl.getLibraryName = function (elem) {
 		log("getLibraryName::" + typeof (elem));
 		return false;
 	}
-
 };
 
 
@@ -163,7 +164,7 @@ fl.renameAllLayers = function () {
 		if (fl.getLibraryName(layer.frames[0].elements[0]) != layer.name) {
 			layer.name = fl.getLibraryName(layer.frames[0].elements[0]);
 		}
-	})
+	});
 }
 fl.initTimeline = function () {
 	fl.layers.forEach(function (layer, i) {
@@ -245,85 +246,4 @@ var JSON = {
     }
 };
 
-
-
-
-
-// var u = FLfile.platformPathToURI("F:/newSanguo/armyCode/army/media/fx/")
-
-// fl.init();
-
-// lib.items.forEach(function(i){
-//  if(i instanceof SymbolItem && i.name.indexOf("fx")>=0){
-//      lib.selectItem(i.name);
-//      // if (lib.getItemProperty('linkageImportForRS') == true) {
-//      //  lib.setItemProperty('linkageImportForRS', false);
-//      // }
-//      // else {
-//      //  lib.setItemProperty('linkageExportForAS', false);
-//      //  lib.setItemProperty('linkageExportForRS', false);
-//      // }
-
-
-//      i.exportSWF(u+i.name+".swf")
-//  }
-// })
-
-// doc.clipCopy()
-// // fl.createDocument()
-
-// var elements = layers[1].frames[0].elements;
-// log(elements)
-// elements.forEach(function(e){
-//  fl.editItem(e.name);
-// })
-
-// lib.items.forEach(function(t){
-//  if(t.symbolType == "button"){
-//      log(t)
-//      lib.setItemProperty('symbolType', 'movie clip');
-//  }
-// });
-//      lib.setItemProperty('symbolType', 'movie clip');
-
-
-
-// var lib = fl.getDocumentDOM().library;
-// lib.setItemProperty('symbolType', 'movie clip');
-// if (lib.getItemProperty('linkageImportForRS') == true) {
-// lib.setItemProperty('linkageImportForRS', false);
-// }
-// else {
-// lib.setItemProperty('linkageExportForAS', false);
-// lib.setItemProperty('linkageExportForRS', false);
-// }
-// lib.setItemProperty('sourceFilePath','file:///');
-// lib.setItemProperty('sourceLibraryName','');
-// lib.setItemProperty('sourceAutoUpdate',false);
-// lib.setItemProperty('scalingGrid',  false);
-
-
-
-/**
- *  add new layer and write "this.stop();"
- *  @see http://bitmap.dyndns.org/blog/archives/001389.html
- */
-// var items = fl.getDocumentDOM().library.getSelectedItems();
-// for (var i = 0; i < items.length; i++) {
-//   fl.getDocumentDOM().library.editItem(items[i].name);
-//   var timeline = fl.getDocumentDOM().getTimeline();
-//   timeline.addNewLayer("script");
-//   timeline.layers[0].frames[0].actionScript = "this.stop();"; 
-// }
-
-
-// elems.forEach(function(e){
-//  e.name = fl.getLibraryName(e);
-// });
-
-
-
-// log(frames[2].setCustomEase("all",[ {x:0,y:0}, {x:.3,y:.3}, {x:.7,y:.7}, {x:1,y:1} ]))
-// log(frames[2].getCustomEase("x"))
 clear();
-log("load");

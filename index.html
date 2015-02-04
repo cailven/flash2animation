@@ -69,7 +69,14 @@
             var animData = window[animName];
             container.style.height = animData.stage.height + "px";
             document.body.appendChild(container);
-            anim.build(animData, container, "./demo/" + animName + ".png");
+            
+            anim.build({
+                data:animData,
+                container:container,
+                image:"./demo/" + animName + ".png",
+                fps:24,
+                time:0
+            });
         }
         script.src = "./demo/" + animName + ".js";
         document.body.appendChild(script);
