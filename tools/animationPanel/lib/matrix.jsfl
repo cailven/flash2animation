@@ -21,5 +21,6 @@ var matrix = (function(){
             }
         }
     };
+
     return matrix;
 })();

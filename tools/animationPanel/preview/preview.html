@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>animation preview</title>
+    <style>
+        body{
+            padding: 1px;
+            margin: 0px;
+        }
+        .container{
+            position: relative;
+            border-bottom: 1px solid #fff;
+            margin:5px auto;
+            overflow: hidden;
+            background: #000030;
+        }
+
+        .flashAnim{
+            position: absolute;
+            left:0px;
+            top:0px;
+            -webkit-transform-origin:50% 50%;
+            -webkit-animation-fill-mode: both !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container"></div>
+    <script src="anim-css.js"></script>
+    <script src="previewAnim.js"></script>
+    <script>
+        var container = document.querySelector(".container");
+        container.style.width = previewAnim.stage.width + "px";
+        container.style.height = previewAnim.stage.height + "px";
+        
+        anim.build({
+            data:previewAnim,
+            container:container,
+            image:"./previewAnim.png",
+            fps:24,
+            time:0
+        });        
+    </script>
+</body>
+</html>

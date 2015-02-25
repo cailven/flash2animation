@@ -174,16 +174,21 @@ fl.initTimeline = function () {
 	});
 };
 
-fl.write = function (uri, text) {
+fl.write = function (uri, text, noLog) {
+    var isLog = !noLog;
 	var url = FLfile.uriToPlatformPath(uri);
 	if (FLfile.write(uri, text)) {
-		log(url + " 创建成功！");
+		isLog && log(url + " 创建成功！");
 		return;
 	};
 
 	FLfile.createFolder(uri.slice(0, uri.lastIndexOf("/")));
-	if (FLfile.write(uri, text)) log(url + " 创建成功！");
-	else log(url + " 创建失败！");
+	if (FLfile.write(uri, text)) {
+        isLog && log(url + " 创建成功！");
+    }
+	else {
+        isLog && log(url + " 创建失败！")
+    };
 };
 
 fl.addLinkage = function (itemName, linkageName) {
@@ -236,8 +241,10 @@ var JSON = {
                 }  
             case 'number':  
                 return obj;  
-            case false:  
+            case 'boolean':
                 return obj;  
+            default:
+                return obj;
         }  
     },
     parse : function(str){
@@ -246,4 +253,18 @@ var JSON = {
     }
 };
 
+fl.copy = function(fileuri, copyuri){
+    if(FLfile.exists(copyuri)){
+        FLfile.remove(copyuri);
+    }
+    FLfile.copy(fileuri, copyuri);
+}
+
+fl.open = function(url){
+	url = FLfile.uriToPlatformPath(url)
+	var command = fl.version.indexOf('MAC') == -1 ? 'start' : 'open';
+	FLfile.runCommandLine(command + " file://" + url.replace(/\s/g, "%20"));
+}
+
 clear();
+

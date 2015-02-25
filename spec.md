@@ -10,9 +10,7 @@
             //关键帧数据
             "frames":[
                 {
-                    "tween": "motion", //缓动方式："motion","none"
-                    "rotateType": "auto", //旋转方式："clockwise","counter-clockwise", "auto"，auto是按最小角度旋转
-                    "rotateTime": 0, //旋转次数
+                    "tween": true, //是否缓动
                     "duration": 10, //持续帧数
                     "elem": {
                         "scaleX": 1,

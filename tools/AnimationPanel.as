@@ -29,7 +29,12 @@
 			addCallback("Data");
 			addCallback("Value");
 
-			inputHTML.setStyle("textFormat", new TextFormat(null, null, 0xffffff));
+			var previewInput:CheckBox = this.inputPreview;
+			ExternalInterface.addCallback("getPreview", function():Boolean{
+				return previewInput.selected;
+			});
+
+			previewInput.setStyle("textFormat", new TextFormat(null, null, 0xffffff));
 			MMExecute("fl.runScript(fl.configURI + 'WindowSWF/animationPanel/panel.jsfl')");
 			MMExecute("fl.trace(\"animationPanel Initialized\");");
 		}
