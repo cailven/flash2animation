@@ -3,7 +3,7 @@
     /**
      * @module anim
     */
-    var anim = {
+    var animCSS = {
         /**
          * @method build 
          * @param {Object} cfg
@@ -23,7 +23,7 @@
                 var time = cfg.time||"infinite";
 
                 data.layers.forEach(function(layer, index){
-                    if(layer.name != "action"){
+                    if(layer.name !== "action"){
                        that.parseLayer(container, layer, image, index, data.texture, fps, time);
                     }
                 });
@@ -217,5 +217,6 @@
         }
     };
 
-    window.anim = anim;
+    window.Anim = window.Anim||{};
+    Anim.css = animCSS;
 })(window);

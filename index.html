@@ -44,7 +44,7 @@
 </head>
 <body>
     <div id="loading">loading...</div>
-    <script src="./src/anim.js"></script>
+    <script src="./src/anim-css.js"></script>
     <script>
     var anims = [
         "anim0"
@@ -70,7 +70,7 @@
             container.style.height = animData.stage.height + "px";
             document.body.appendChild(container);
             
-            anim.build({
+            Anim.css.build({
                 data:animData,
                 container:container,
                 image:"./demo/" + animName + ".png",
