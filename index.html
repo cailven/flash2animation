@@ -40,6 +40,16 @@
             left:50%;
             top:50%;
         }
+
+        .control{
+            margin: 0 auto;
+            padding:2px;
+            margin-bottom:15px;
+        }
+
+        button{
+            cursor:pointer;
+        }
     </style>
 </head>
 <body>
@@ -69,14 +79,32 @@
             var animData = window[animName];
             container.style.height = animData.stage.height + "px";
             document.body.appendChild(container);
+
+            var control = document.createElement("div");
+            control.className = "control";
+            control.style.width = 550 + "px";
+            control.innerHTML = '\
+                <button data="play">play</button> \
+                <button data="stop">stop</button> \
+                <button data="pause">pause</button> \
+                <button data="resume">resume</button> \
+            ';
+            document.body.appendChild(control);
             
-            Anim.css.build({
+            var anim = Anim.css.build({
                 data:animData,
                 container:container,
                 image:"./demo/" + animName + ".png",
                 fps:24,
                 time:0
             });
+
+            control.onclick = function(e){
+                e = e||window.event;
+                if(e.target.tagName.toLowerCase() === "button"){
+                    anim[e.target.getAttribute("data")]();
+                }
+            };
         }
         script.src = "./demo/" + animName + ".js";
         document.body.appendChild(script);

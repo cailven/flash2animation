@@ -1,0 +1,32 @@
+{
+    "name":"flash2animation",
+    "description":"use FLASH IDE export css3 animation",
+    "version":"1.0.0",
+    "author":[
+        {
+            "name":"06wj",
+            "email":"06wj@163.com"
+        }
+    ],
+    "main":"gulpfile.js",
+    "sources":{
+        "src":"src",
+        "files":[
+           "anim-css.js",
+           "anim-js.js",
+           "bridge/hiloBridge.js",
+           "bridge/gamaBridge.js"
+        ]
+    },
+    "devDependencies":{
+        "gulp": "~3.8.7",
+        "gulp-concat": "~2.3.4",
+        "gulp-uglify": "~0.3.1",
+        "gulp-jshint": "~1.8.4",
+        "jshint-stylish": "~0.4.0",
+        "gulp-rename": "~1.2.0",
+        "gulp-insert": "~0.4.0",
+        "gulp-rimraf": "~0.1.0",
+        "through2":"~0.6.3"
+    }
+}

@@ -178,16 +178,16 @@ fl.write = function (uri, text, noLog) {
     var isLog = !noLog;
 	var url = FLfile.uriToPlatformPath(uri);
 	if (FLfile.write(uri, text)) {
-		isLog && log(url + " 创建成功！");
+		isLog && log(url + " create success!");
 		return;
 	};
 
 	FLfile.createFolder(uri.slice(0, uri.lastIndexOf("/")));
 	if (FLfile.write(uri, text)) {
-        isLog && log(url + " 创建成功！");
+        isLog && log(url + " create success!");
     }
 	else {
-        isLog && log(url + " 创建失败！")
+        isLog && log(url + " create fail!")
     };
 };
 

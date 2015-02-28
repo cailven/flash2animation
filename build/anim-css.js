@@ -17,55 +17,20 @@
             var that = this;
             var data = cfg.data;
             var image = cfg.image;
-            var elems = [];
             if(data && image){
                 var container = cfg.container||document.body;
                 var fps = cfg.fps||data.stage.fps;
                 var time = cfg.time||"infinite";
 
                 data.layers.forEach(function(layer, index){
-                    var elem = that._parseLayer(container, layer, image, index, data.texture, fps, time);
-                    if(elem){
-                        elems.push(elem);
-                    }   
+                    if(layer.name !== "action"){
+                       that.parseLayer(container, layer, image, index, data.texture, fps, time);
+                    }
                 });
-            }
-
-            return {
-                play:function(){
-                    elems.forEach(function(elem){
-                        var animName = elem.getAttribute("data-anim");
-                        elem.className = "flashAnim";
-                        setTimeout(function(){
-                            elem.className = animName + " flashAnim"
-                        }, 100);
-                        elem.style[that.getCSSVendor() + "AnimationPlayState"] = "running";
-                    });
-                },
-                stop:function(){
-                    elems.forEach(function(elem){
-                        var animName = elem.getAttribute("data-anim");
-                        elem.className = "flashAnim";
-                        setTimeout(function(){
-                            elem.className = animName + " flashAnim"
-                        }, 100);
-                        elem.style[that.getCSSVendor() + "AnimationPlayState"] = "paused";
-                    });
-                },
-                pause:function(){
-                    elems.forEach(function(elem){
-                        elem.style[that.getCSSVendor() + "AnimationPlayState"] = "paused";
-                    });
-                },
-                resume:function(){
-                    elems.forEach(function(elem){
-                        elem.style[that.getCSSVendor() + "AnimationPlayState"] = "running";
-                    });
-                }
             }
         },
         /**
-         * @method _parseLayer
+         * @method parseLayer
          * @param {HTMLElement} container
          * @param {Object} layerData 层数据
          * @param {String} image 图片地址
@@ -74,7 +39,7 @@
          * @param {Number} fps 帧频 
          * @param {Number} time 播放次数
         */
-        _parseLayer:function(container, layerData, image, index, texture, fps, time){
+        parseLayer:function(container, layerData, image, index, texture, fps, time){
             var that = this;
             var cssVendor = that.getCSSVendor();
             var frames = layerData.frames;
@@ -163,12 +128,8 @@
             var animName = layerData.name + (animID++);
             that.addStyle(styles, elemData, animName, time);
             var elem = document.createElement("div");
-            elem.className = animName + " flashAnim";   
-            elem.setAttribute("data-anim", animName);  
-            elem.setAttribute("data-layer", layerData.name);       
+            elem.className = animName + " flashAnim";            
             container.appendChild(elem);
-
-            return elem;
         },
         /**
          * @method addStyle

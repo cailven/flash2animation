@@ -144,6 +144,25 @@
         return data;
     }
 
+    function getActionData(){
+        var data = {};
+        for(var i = 0;i < fl.layers.length;i ++){
+            var layer = fl.layers[i];
+            if(layer.name === "action"){
+                var frames = layer.frames;
+                for(var i = 0;i < frames.length;i++){
+                    var frame = frames[i];
+                    if(frame.name){
+                        data[frame.name] = i;
+                        i += frame.duration - 1;
+                    }
+                }
+                return data;
+            }
+        }
+        return data;
+    }
+
     function getExportInfo(){
         var animationPanel = fl.swfPanels.filter(function(panel){
             return panel.name == "animationPanel";
@@ -180,7 +199,8 @@
             width:doc.width,
             height:doc.height,
             fps:doc.frameRate
-        }
+        },
+        actions:getActionData()
     };
     data.texture = createImageData(folderURI + exportInfo.image);
 
