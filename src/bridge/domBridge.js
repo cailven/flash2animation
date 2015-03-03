@@ -66,7 +66,7 @@
         */
         renderDisplay:function(display, data){
             var style = display.style;
-            style[cssVendor + "TransformOrigin"] = display.originX + "px " + display.originY + "px";
+            style[cssVendor + "TransformOrigin"] = data.originX + "px " + data.originY + "px";
             style.opacity = data.alpha * .01;
             style[cssVendor + "Transform"] = 
             "translate3d(" + (data.x - data.originX) + "px," + (data.y - data.originY) + "px,0px) " + 
