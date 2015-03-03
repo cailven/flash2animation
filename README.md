@@ -4,9 +4,10 @@ flash插件导出css3 animation动画
 ## demo 
 * [css3 animation](http://06wj.github.io/flash2animation/index.html)
 * js版  
-    目前支持hilo, gama，添加新的渲染库支持可参考[hiloBridge.js](https://github.com/06wj/flash2animation/blob/master/src/bridge/hiloBridge.js)
-    * [hilo demo](http://06wj.github.io/flash2animation/index-js.html)
-    * [gama demo](http://06wj.github.io/flash2animation/index-js.html?gama)
+    目前支持原生js，hilo, gama，添加新的渲染库支持可参考[hiloBridge.js](https://github.com/06wj/flash2animation/blob/master/src/bridge/hiloBridge.js)
+    * [原生js demo](http://06wj.github.io/flash2animation/index-js.html)
+    * [hilo demo](http://06wj.github.io/flash2animation/index-js.html?type=hilo)
+    * [gama demo](http://06wj.github.io/flash2animation/index-js.html?type=gama)
 
 ## 使用方法
 1. 导出动画数据

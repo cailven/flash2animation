@@ -9,11 +9,7 @@
             margin: 0px;
         }
         .container{
-            position: relative;
-            width: 550px;
-            height: 400px;
             margin:0px auto;
-            overflow: hidden;
             background: #000030;
         }
 
@@ -35,6 +31,7 @@
     <script src="./src/anim-js.js"></script>
     <script src="./src/bridge/hiloBridge.js"></script>
     <script src="./src/bridge/gamaBridge.js"></script>
+    <script src="./src/bridge/domBridge.js"></script>
     <script>
         var GameKit = Gama.GameKit;
         var anims = [
@@ -86,16 +83,21 @@
             document.body.appendChild(control);
     
             var stage, bridge;
-            var useGama = location.search.indexOf("gama") > -1;
-            if(useGama){
-                stage = createGamaStage(container, stageWidth, stageHeight);
-                bridge = Anim.gamaBridge;   
+            var type = /type=([\w]+)/.exec(location.search);
+            type = type?type[1]:"dom";
+            switch(type){
+                case "hilo":
+                    stage = createHiloStage(container, stageWidth, stageHeight);
+                    break;
+                case "gama":
+                    stage = createGamaStage(container, stageWidth, stageHeight);
+                    break;
+                default:
+                    stage = createDomStage(container);
+                    break;
             }
-            else{
-                stage = createHiloStage(container, stageWidth, stageHeight);
-                bridge = Anim.hiloBridge; 
-            }
-                     
+            bridge = Anim[type + "Bridge"];
+           
             var anim = window["_" + animName] = Anim.js.build({
                 data:data,
                 image:image,
@@ -115,6 +117,10 @@
                 e.target.nextSibling.innerHTML = "播放速度:" + e.target.value;
                 anim.timeScale = e.target.value;
             }
+        }
+
+        function createDomStage(container, width, height){
+            return container;
         }
 
         function createHiloStage(container, width, height){

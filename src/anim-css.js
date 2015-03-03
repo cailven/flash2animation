@@ -1,5 +1,6 @@
 ;(function(){
     var animID = 0;
+    var baseStyleID = "baseAnimStyle";
     /**
      * @module anim
     */
@@ -23,12 +24,34 @@
                 var fps = cfg.fps||data.stage.fps;
                 var time = cfg.time||"infinite";
 
+                var animContainer = document.createElement("div");
+                animContainer.className = "flashAnimContainer";
+                animContainer.style.position = "relative";
+                animContainer.style.width = cfg.data.stage.width + "px";
+                animContainer.style.height = cfg.data.stage.height + "px";
+                animContainer.style.overflow = "hidden";
+                container.appendChild(animContainer);
+
                 data.layers.forEach(function(layer, index){
-                    var elem = that._parseLayer(container, layer, image, index, data.texture, fps, time);
+                    var elem = that._parseLayer(animContainer, layer, image, index, data.texture, fps, time);
                     if(elem){
                         elems.push(elem);
                     }   
                 });
+            }
+
+            var baseStyleElem = document.getElementById(baseStyleID);
+            if(!baseStyleElem){
+                this.createStyle(' \
+                    .flashAnim{ \
+                        position:absolute; \
+                        left:0px; \
+                        top:0px; \
+                        -webkit-animation-fill-mode: both !important \
+                        -Moz-animation-fill-mode: both !important \
+                        animation-fill-mode: both !important \
+                    } \
+                ', baseStyleID);
             }
 
             return {
@@ -213,10 +236,12 @@
                 cssVendor:cssVendor
             },elemData));
 
-            var styleElem = document.getElementById("flashAnimStyle");
-            styleElem = document.createElement("style");
-            styleElem.innerHTML = style;
-            styleElem.id = "flashAnimStyle_" + animName;
+            this.createStyle(style, "flashAnimStyle_" + animName);
+        },
+        createStyle:function(content, id){
+            var styleElem = document.createElement("style");
+            styleElem.innerHTML = content;
+            styleElem.id = id;
             document.getElementsByTagName("head")[0].appendChild(styleElem);
         },
         /**
