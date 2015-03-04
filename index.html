@@ -43,7 +43,7 @@
 </head>
 <body>
     <div id="loading">loading...</div>
-    <script src="./src/anim-css.js"></script>
+    <script src="./build/anim.js"></script>
     <script>
     var anims = [
         "anim0"
@@ -80,7 +80,7 @@
             ';
             document.body.appendChild(control);
             
-            var anim = Anim.css.build({
+            var anim = Anim.AnimCSS.build({
                 data:animData,
                 container:container,
                 image:"./demo/" + animName + ".png",

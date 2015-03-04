@@ -9,19 +9,9 @@
             margin: 0px;
         }
         .container{
-            position: relative;
             border-bottom: 1px solid #fff;
             margin:5px auto;
-            overflow: hidden;
             background: #000030;
-        }
-
-        .flashAnim{
-            position: absolute;
-            left:0px;
-            top:0px;
-            -webkit-transform-origin:50% 50%;
-            -webkit-animation-fill-mode: both !important;
         }
     </style>
 </head>
@@ -34,7 +24,7 @@
         container.style.width = previewAnim.stage.width + "px";
         container.style.height = previewAnim.stage.height + "px";
         
-        anim.build({
+        Anim.AnimCSS.build({
             data:previewAnim,
             container:container,
             image:"./previewAnim.png",

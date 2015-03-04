@@ -19,19 +19,50 @@
             margin-bottom:15px;
         }
 
-        button{
+        .type-control{
+            width:600px;
+            margin:5px auto;
+            text-align: center;
+            line-height: 20px;
+            height: 20px;
+            font-size: 16px;
+        }
+
+        .type-input{
+            display:inline-block;
+            cursor:pointer;
+            overflow: hidden;
+        }
+
+        .type-title{
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        button, input{
             cursor:pointer;
         }
     </style>
 </head>
 <body>
+    <div class="type-control">
+        <span class="type-title">渲染库:</span>
+        <div class="type-input" data-type="dom">
+            <input type="radio" class="inputdom"/> <span>原生js</span>
+        </div>
+        <div class="type-input" data-type="hilo">
+            <input type="radio" class="inputhilo"/> <span>hilo</span>
+        </div>
+        <div class="type-input" data-type="gama">
+            <input type="radio" class="inputgama"/> <span>gama</span>
+        </div>
+    </div>
+
     <script src="http://g.tbcdn.cn/tbc/gama-gamekit/0.0.2/index-standalone-min.js"></script>
     <script src="http://g.tbcdn.cn/tmapp/hilo/1.0.0/standalone/hilo-standalone.min.js"></script>
-    <script src="http://g.tbcdn.cn/tmapp/hilo/1.0.0/flash/hilo-flash.js" data-auto="true"></script>
-    <script src="./src/anim-js.js"></script>
-    <script src="./src/bridge/hiloBridge.js"></script>
-    <script src="./src/bridge/gamaBridge.js"></script>
-    <script src="./src/bridge/domBridge.js"></script>
+    <script src="./build/anim.min.js"></script>
+    <script src="./build/hiloBridge.min.js"></script>
+    <script src="./build/gamaBridge.min.js"></script>
     <script>
         var GameKit = Gama.GameKit;
         var anims = [
@@ -39,9 +70,12 @@
             "anim1",
             "anim2"
         ];
+
+        var jsType = /type=([\w]+)/.exec(location.search);
+        jsType = jsType?jsType[1]:"dom";
         
         var ticker = new Hilo.Ticker(60);
-        ticker.addTick(Anim.js);
+        ticker.addTick(Anim.AnimJS);
         ticker.start();
 
         anims.forEach(function(animName){
@@ -83,9 +117,7 @@
             document.body.appendChild(control);
     
             var stage, bridge;
-            var type = /type=([\w]+)/.exec(location.search);
-            type = type?type[1]:"dom";
-            switch(type){
+            switch(jsType){
                 case "hilo":
                     stage = createHiloStage(container, stageWidth, stageHeight);
                     break;
@@ -96,15 +128,20 @@
                     stage = createDomStage(container);
                     break;
             }
-            bridge = Anim[type + "Bridge"];
+            bridge = Anim[jsType + "Bridge"];
            
-            var anim = window["_" + animName] = Anim.js.build({
+            var anim = window["_" + animName] = Anim.AnimJS.build({
                 data:data,
                 image:image,
                 fps:24,
-                container:stage
+                container:stage,
+                time:0
             }, bridge);
             anim.play();
+
+            anim.on("animationEnd", function(e){
+                console.log("animationEnd");
+            });
 
             control.onclick = function(e){
                 e = e||window.event;
@@ -149,6 +186,17 @@
             });
             return stage;
         }
+
+        document.querySelector(".type-control").querySelector(".input" + jsType).checked = true;
+        var typeControls = Array.prototype.slice.call(document.querySelectorAll(".type-input"), 0);
+        typeControls.forEach(function(elem){
+            elem.onclick = function(){
+                var type = this.getAttribute("data-type");
+                if(type && type != jsType){
+                    location.search = "?type=" + type;
+                }
+            }
+        });
     </script>
 </body>
 </html>

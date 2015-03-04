@@ -10,12 +10,17 @@
     ],
     "main":"gulpfile.js",
     "sources":{
-        "src":"src",
-        "files":[
-           "anim-css.js",
-           "anim-js.js",
-           "bridge/hiloBridge.js",
-           "bridge/gamaBridge.js"
+        "base":[
+           "src/base/base.js",
+           "src/base/EventMix.js",
+           "src/css/AnimCSS.js",
+           "src/js/AnimElem.js",
+           "src/js/AnimJS.js",
+           "src/bridge/domBridge.js"
+        ],
+        "bridge":[
+          "src/bridge/hiloBridge.js",
+          "src/bridge/gamaBridge.js"
         ]
     },
     "devDependencies":{

@@ -88,6 +88,38 @@
                 }
             }
         });
+        
+        var maxFrame = fl.layers.reduce(function(a, b){
+            var len = Math.max(a.frames.length, b.frames.length);
+            return {
+                frames:{
+                    length:len
+                }
+            }
+        }).frames.length;
+
+        layersData.forEach(function(layer){
+            var frames = layer.frames;
+            if(frames){
+                var f = 0;
+                frames.forEach(function(frame, i){
+                    f += frame.duration;
+                    if(frame.tween){
+                        if(!frame.elem || !frames[i+1] || (frames[i+1] && !frames[i+1].elem)){
+                            frame.tween = false;
+                        }
+                    }
+                });
+                var deltaFrame = maxFrame - f;
+                if(deltaFrame > 0){
+                    layer.frames.push({
+                        tween:false,
+                        duration:deltaFrame,
+                        elem:undefined
+                    });
+                }
+            }
+        });
 
         return layersData;
     }
@@ -100,7 +132,7 @@
         myExport.layoutFormat = "JSON";
         return myExport;
     }
-
+    
     function createImageData(uri){  
         var myExport = createExporter();
         var names = [];
